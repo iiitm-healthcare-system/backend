@@ -66,6 +66,20 @@ paths:
               schema:
                 $ref: "#/components/schemas/SignUpResponse"
 
+  /user/:
+    get:
+      tags:
+        - User Service
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserResponse"
+
 components:
   schemas:
     SignUpResponse:
@@ -135,6 +149,36 @@ components:
           type: string
           example: "4/0AY0e-g5Uq7q3"
 
+    GetUserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "5e1f5c9c-7b1a-4c1c-8c9d-3d2a1d2e3f4g"
+        email:
+          type: string
+          format: email
+          example: "johndoe@test.com"
+        credits:
+          type: integer
+          example: 0
+        tags:
+          type: array
+          items:
+            type: string
+            example: "javascript"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2020-01-01T00:00:00.000Z"
+
     Error:
       type: object
       additionalProperties: true
+
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      description: >
+        Provide a valid JWT token (without adding `Bearer : ` prefix)
