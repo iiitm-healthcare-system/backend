@@ -82,6 +82,17 @@ export class Controller {
       next(err);
     }
   }
+
+  async getAnalytics(req, res, next) {
+    try {
+      const { timeframe, type } = req.query;
+      const data = await caseService.getAnalytics(timeframe, type);
+      res.status(200).send(data);
+    } catch (err) {
+      l.error(err, "GET ANALYTICS CONTROLLER");
+      next(err);
+    }
+  }
 }
 
 export default new Controller();

@@ -8,6 +8,17 @@ import l from "../../common/logger";
 import validationService from "./validation.service";
 import CaseModel from "../../models/CaseModel";
 
+const timeframWiseIntervals = {
+  week: {
+    count: 7,
+  },
+  month: {
+    count: 30,
+  },
+  year: {
+    count: 365,
+  },
+};
 class CaseService {
   async createCase(
     patient,
@@ -138,6 +149,82 @@ class CaseService {
       );
     } catch (err) {
       l.error(err, "MARK MED AS GIVEN ERROR");
+      throw err;
+    }
+  }
+
+  async getAnalytics(timeframe = "week", type = "ongoing") {
+    const startDate = new Date();
+    startDate.setDate(
+      startDate.getDate() - timeframWiseIntervals[timeframe].count + 1
+    );
+    const matchQuery = {
+      createdAt: { $gte: startDate }, // Filter documents created after 'startDate'
+    };
+
+    if (type == "ongoing" || type == "completed") {
+      matchQuery.status = type;
+    }
+
+    try {
+      let data = await CaseModel.aggregate([
+        {
+          $match: matchQuery,
+        },
+        {
+          $sort: {
+            createdAt: -1,
+          },
+        },
+        {
+          $project: {
+            day: {
+              $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+            },
+          },
+        },
+        {
+          $group: {
+            _id: "$day",
+            count: { $sum: 1 }, // Count the number of cases for each date
+          },
+        },
+      ]);
+
+      data = data.map((item) => ({
+        label: item._id,
+        count: item.count,
+      }));
+
+      const dateList = [];
+      for (let i = 0; i < timeframWiseIntervals[timeframe].count; i++) {
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + i);
+        dateList.push(
+          `${currentDate.getFullYear()}-${
+            currentDate.getMonth() + 1
+          }-${currentDate.getDate()}`
+        );
+      }
+
+      const finalData = dateList.map((date) => {
+        const matchingData = data.find((data) => {
+          return (
+            data.label
+              .split("-")
+              .map((item) => parseInt(item))
+              .join("-") === date
+          );
+        });
+        return {
+          label: date,
+          count: matchingData ? matchingData.count : 0,
+        };
+      });
+
+      return finalData;
+    } catch (err) {
+      l.error(err, "GET ANALYTICS");
       throw err;
     }
   }

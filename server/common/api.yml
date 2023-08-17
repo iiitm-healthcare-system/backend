@@ -220,6 +220,31 @@ paths:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
 
+  /cases/analytics:
+    get:
+      tags:
+        - Case Service
+      security:
+        - Bearer: []
+      parameters:
+        - in: query
+          name: timeframe
+          schema:
+            type: string
+          description: week
+        - in: query
+          name: type
+          schema:
+            type: string
+          description: ongoing
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
 components:
   schemas:
     SignUpResponse:
