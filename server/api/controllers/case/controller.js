@@ -39,5 +39,17 @@ export class Controller {
       next(err);
     }
   }
+
+  async getCaseByID(req, res, next) {
+    try {
+      const { id } = req.params;
+      const casesData = await caseService.getCaseById(id);
+      res.status(200).send(casesData);
+    } catch (err) {
+      l.error(err, "GET ALL CASES CONTROLLER");
+      next(err);
+    }
+  }
 }
+
 export default new Controller();

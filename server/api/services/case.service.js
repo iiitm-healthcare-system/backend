@@ -33,6 +33,7 @@ class CaseService {
       return caseDoc;
     } catch (err) {
       l.error(err, "CREATE CASE ERROR");
+      throw err;
     }
   }
 
@@ -59,6 +60,20 @@ class CaseService {
       };
     } catch (err) {
       l.error(err, "GET ALL CASES ERROR");
+      throw err;
+    }
+  }
+
+  async getCaseById(id) {
+    try {
+      const caseData = await CaseModel.findById(id)
+        .populate(["patient", "doctor", "attendant", "completedBy"])
+        .lean();
+      if (!caseData) throw new Error("Case not found");
+      return caseData;
+    } catch (err) {
+      l.error(err, "GET CASE BY ID ERROR");
+      throw err;
     }
   }
 }

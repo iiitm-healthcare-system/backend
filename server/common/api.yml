@@ -148,6 +148,28 @@ paths:
               schema:
                 $ref: "#/components/schemas/GetCasesResponse"
 
+  /cases/{id}:
+    get:
+      tags:
+        - Case Service
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          example: "5e1f5c9"
+          description: Page Number
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCaseByIdResponse"
+
 components:
   schemas:
     SignUpResponse:
@@ -304,6 +326,10 @@ components:
           items:
             type: object
             example: {}
+
+    GetCaseByIdResponse:
+      type: object
+      example: {}
 
     Error:
       type: object
