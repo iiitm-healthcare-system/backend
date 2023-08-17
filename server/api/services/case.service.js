@@ -17,19 +17,23 @@ class CaseService {
     prescription,
     doctor
   ) {
-    const caseDoc = await CaseModel.create({
-      patient,
-      doctor,
-      attendant: null,
-      status: "ongoing",
-      vitals,
-      complaints,
-      diagnosis,
-      prescription,
-      completedAt: null,
-      completedBy: null,
-    });
-    return caseDoc;
+    try {
+      const caseDoc = await CaseModel.create({
+        patient,
+        doctor,
+        attendant: null,
+        status: "ongoing",
+        vitals,
+        complaints,
+        diagnosis,
+        prescription,
+        completedAt: null,
+        completedBy: null,
+      });
+      return caseDoc;
+    } catch (err) {
+      l.error(err, "CREATE CASE ERROR");
+    }
   }
 }
 
