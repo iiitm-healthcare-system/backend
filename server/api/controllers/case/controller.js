@@ -93,6 +93,16 @@ export class Controller {
       next(err);
     }
   }
+
+  async getStats(req, res, next) {
+    try {
+      const data = await caseService.getStats();
+      res.status(200).send(data);
+    } catch (err) {
+      l.error(err, "GET STATS CONTROLLER");
+      next(err);
+    }
+  }
 }
 
 export default new Controller();

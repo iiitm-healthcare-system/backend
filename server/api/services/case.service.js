@@ -228,6 +228,90 @@ class CaseService {
       throw err;
     }
   }
+
+  async getStats() {
+    try {
+      // Get the current date and the start of the week
+      const currentDate = new Date();
+      const startOfWeek = new Date(currentDate);
+      startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+
+      // Query to get total cases this week
+      let totalCasesThisWeek = await CaseModel.countDocuments({
+        createdAt: { $gte: startOfWeek },
+      });
+
+      // Query to get total cases completed this week
+      let totalCasesCompletedThisWeek = await CaseModel.countDocuments({
+        completedAt: { $gte: startOfWeek },
+        status: "completed",
+      });
+
+      // Query to get total ongoing cases
+      let totalOngoingCases = await CaseModel.countDocuments({
+        status: "ongoing",
+      });
+
+      // Query to get total number of medication provided
+      let totalMedicationProvided = await CaseModel.aggregate([
+        {
+          $unwind: "$prescription.medications",
+        },
+        {
+          $match: { "prescription.medications.provided": true },
+        },
+        {
+          $group: {
+            _id: null,
+            totalMedicationProvided: { $sum: 1 },
+          },
+        },
+      ]);
+
+      // Query to get total number of medications not provided
+      let totalMedicationNotProvided = await CaseModel.aggregate([
+        {
+          $unwind: "$prescription.medications",
+        },
+        {
+          $match: { "prescription.medications.provided": false },
+        },
+        {
+          $group: {
+            _id: null,
+            totalMedicationNotProvided: { $sum: 1 },
+          },
+        },
+      ]);
+
+      [
+        totalCasesThisWeek,
+        totalCasesCompletedThisWeek,
+        totalOngoingCases,
+        totalMedicationProvided,
+        totalMedicationNotProvided,
+      ] = await Promise.all([
+        totalCasesThisWeek,
+        totalCasesCompletedThisWeek,
+        totalOngoingCases,
+        totalMedicationProvided,
+        totalMedicationNotProvided,
+      ]);
+
+      return {
+        cases: totalCasesThisWeek,
+        recovered: totalCasesCompletedThisWeek,
+        ongoing: totalOngoingCases,
+        medicationProvided:
+          totalMedicationProvided[0]?.totalMedicationProvided || 0,
+        medicationNotProvided:
+          totalMedicationNotProvided[0]?.totalMedicationNotProvided || 0,
+      };
+    } catch (err) {
+      l.error(err, "GET STATS");
+      throw err;
+    }
+  }
 }
 
 export default new CaseService();
