@@ -18,7 +18,9 @@ export class Controller {
   async searchPatients(req, res, next) {
     try {
       const { query } = req.query;
-      const data = await userService.searchPatients(query);
+      const data = await userService.searchPatients(
+        query.toString().toLowerCase().trim().replace("%20", " ")
+      );
       res.status(200).send(data);
     } catch (err) {
       l.error(err, "LOGIN CONTROLLER ERROR");

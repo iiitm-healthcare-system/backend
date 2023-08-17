@@ -152,21 +152,23 @@ class UserService {
 
   async searchPatients(query) {
     // search based on mail and name
+    let regexExp = new RegExp(query.replace(/\s+/g, "\\s+"), "gi");
+
     try {
       const userData = await UserModel.find({
         $or: [
           {
             name: {
-              $regex: query,
+              $regex: regexExp,
             },
           },
           {
             email: {
-              $regex: query,
+              $regex: regexExp,
             },
           },
         ],
-        role: "patient",
+        // role: "patient",
       });
       return userData;
     } catch (err) {

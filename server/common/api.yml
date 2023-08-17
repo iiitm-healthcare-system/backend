@@ -94,7 +94,6 @@ paths:
           schema:
             type: string
           description: Search Query
-          required: true
       responses:
         200:
           description: Success
