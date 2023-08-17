@@ -10,6 +10,8 @@ tags:
     description: Auth Service endpoints
   - name: User Service
     description: User Service endpoints
+  - name: Case Service
+    description: Reports Service endpoints
 
 paths:
   # /auth/signup:
@@ -79,6 +81,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetUserResponse"
+
+  /cases/:
+    post:
+      tags:
+        - Case Service
+      security:
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCaseRequestBody"
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCaseResponse"
 
 components:
   schemas:
@@ -171,6 +193,53 @@ components:
           type: string
           format: date-time
           example: "2020-01-01T00:00:00.000Z"
+
+    CreateCaseRequestBody:
+      type: object
+      required:
+        - patient
+        - vitals
+        - complains
+        - diagnosis
+        - prescription
+      properties:
+        patient:
+          type: string
+          example: "6516164684684hfdvd"
+        vitals:
+          type: object
+          example: {}
+        complains:
+          type: array
+          items:
+            type: object
+            example: {}
+        diagnosis:
+          type: array
+          items:
+            type: object
+            example: {}
+        prescription:
+          type: object
+          properties:
+            medications:
+              type: array
+              items:
+                type: object
+                example: {}
+            advice:
+              type: string
+              example: "Take Rest"
+
+    CreateCaseResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Successfully filed case"
+        data:
+          type: object
+          example: {}
 
     Error:
       type: object
