@@ -82,6 +82,27 @@ paths:
               schema:
                 $ref: "#/components/schemas/GetUserResponse"
 
+  /user/patients:
+    get:
+      tags:
+        - User Service
+      security:
+        - Bearer: []
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search Query
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchUserResponse"
+
   /cases/:
     post:
       tags:
@@ -157,7 +178,7 @@ components:
         email:
           type: string
           format: email
-          example: "johndoe@test.com"
+          example: "imt_2020111@iiitm.ac.in"
         password:
           type: string
           example: "password"
@@ -193,6 +214,12 @@ components:
           type: string
           format: date-time
           example: "2020-01-01T00:00:00.000Z"
+
+    SearchUserResponse:
+      type: array
+      items:
+        type: object
+        example: {}
 
     CreateCaseRequestBody:
       type: object

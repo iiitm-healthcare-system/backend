@@ -149,6 +149,31 @@ class UserService {
       throw error;
     }
   }
+
+  async searchPatients(query) {
+    // search based on mail and name
+    try {
+      const userData = await UserModel.find({
+        $or: [
+          {
+            name: {
+              $regex: query,
+            },
+          },
+          {
+            email: {
+              $regex: query,
+            },
+          },
+        ],
+        role: "patient",
+      });
+      return userData;
+    } catch (err) {
+      l.error(err, "GET USER ERROR");
+      throw err;
+    }
+  }
 }
 
 export default new UserService();

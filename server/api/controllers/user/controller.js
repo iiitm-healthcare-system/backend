@@ -14,5 +14,16 @@ export class Controller {
       next(err);
     }
   }
+
+  async searchPatients(req, res, next) {
+    try {
+      const { query } = req.query;
+      const data = await userService.searchPatients(query);
+      res.status(200).send(data);
+    } catch (err) {
+      l.error(err, "LOGIN CONTROLLER ERROR");
+      next(err);
+    }
+  }
 }
 export default new Controller();
