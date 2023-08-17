@@ -160,7 +160,7 @@ paths:
           schema:
             type: string
           example: "5e1f5c9"
-          description: Page Number
+          description: Case ID
           required: true
       responses:
         200:
@@ -169,6 +169,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetCaseByIdResponse"
+
+  /cases/medication/markAsGiven/{id}:
+    post:
+      tags:
+        - Case Service
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          example: "5e1f5c9"
+          description: Case ID
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkMedsAsGivenBody"
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /cases/markComplete/{id}:
+    post:
+      tags:
+        - Case Service
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          example: "5e1f5c9"
+          description: Case ID
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
 
 components:
   schemas:
@@ -330,6 +380,20 @@ components:
     GetCaseByIdResponse:
       type: object
       example: {}
+
+    MarkMedsAsGivenBody:
+      type: object
+      properties:
+        medicineId:
+          type: number
+          example: 1
+
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Taks Complted Successfully"
 
     Error:
       type: object

@@ -76,6 +76,68 @@ class CaseService {
       throw err;
     }
   }
+
+  async markMedicineAsGiven(caseId, medicineId, user) {
+    try {
+      const caseData = await CaseModel.findById(caseId).lean();
+      if (!caseData) {
+        throw new Error("Case Not Found");
+      }
+      if (caseData.prescription.medications.length <= medicineId) {
+        throw new Error("Medicine Not Found");
+      }
+      if (caseData.prescription.medications[medicineId].provided) {
+        throw new Error("Medicine Already Provided");
+      }
+
+      const medications = caseData.prescription.medications;
+      medications[medicineId].provided = true;
+
+      await CaseModel.updateOne(
+        {
+          _id: caseId,
+        },
+        {
+          $set: {
+            "prescription.medications": medications,
+            attendant: user._id,
+          },
+        }
+      );
+    } catch (err) {
+      l.error(err, "MARK MED AS GIVEN ERROR");
+      throw err;
+    }
+  }
+
+  async markCaseResolved(caseId, user) {
+    try {
+      const caseData = await CaseModel.findById(caseId).lean();
+      if (!caseData) {
+        throw new Error("Case Not Found");
+      }
+
+      if (caseData.status == "completed") {
+        throw new Error("Case Already Completed");
+      }
+
+      await CaseModel.updateOne(
+        {
+          _id: caseId,
+        },
+        {
+          $set: {
+            status: "completed",
+            completedAt: Date.now(),
+            completedBy: user._id,
+          },
+        }
+      );
+    } catch (err) {
+      l.error(err, "MARK MED AS GIVEN ERROR");
+      throw err;
+    }
+  }
 }
 
 export default new CaseService();
