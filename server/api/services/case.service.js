@@ -35,6 +35,32 @@ class CaseService {
       l.error(err, "CREATE CASE ERROR");
     }
   }
+
+  async getAllCases(page = 1, limit = 10, user) {
+    try {
+      const query = {};
+      if (user.role == "doctor") {
+        query.doctor = user._id;
+      } else if (user.role == "patient") {
+        query.patient = user._id;
+      }
+
+      let cases = CaseModel.find(query)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate(["patient", "doctor", "attendant", "completedBy"])
+        .lean();
+
+      let count = CaseModel.countDocuments(query);
+      [cases, count] = await Promise.all([cases, count]);
+      return {
+        cases,
+        count,
+      };
+    } catch (err) {
+      l.error(err, "GET ALL CASES ERROR");
+    }
+  }
 }
 
 export default new CaseService();

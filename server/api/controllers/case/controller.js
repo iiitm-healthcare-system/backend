@@ -11,13 +11,7 @@ export class Controller {
         throw new Error("Only Doctors are allowed to create cases");
       }
 
-      let {
-        patient,
-        vitals,
-        complains,
-        diagnosis,
-        prescription,
-      } = req.body;
+      let { patient, vitals, complains, diagnosis, prescription } = req.body;
 
       const caseDoc = await caseService.createCase(
         patient,
@@ -31,6 +25,17 @@ export class Controller {
       res.status(200).send(caseDoc);
     } catch (err) {
       l.error(err, "CREATE CASE CONROLLER");
+      next(err);
+    }
+  }
+
+  async getAllCases(req, res, next) {
+    try {
+      const { page, limit } = req.query;
+      const cases = await caseService.getAllCases(page, limit, req.user);
+      res.status(200).send(cases);
+    } catch (err) {
+      l.error(err, "GET ALL CASES CONTROLLER");
       next(err);
     }
   }
