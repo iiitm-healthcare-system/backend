@@ -47,6 +47,9 @@ class CaseService {
       }
 
       let cases = CaseModel.find(query)
+        .sort({
+          createdAt: -1,
+        })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate(["patient", "doctor", "attendant", "completedBy"])
