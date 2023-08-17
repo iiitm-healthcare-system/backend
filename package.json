@@ -24,6 +24,7 @@
     "google-auth-library": "^9.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.17",
+    "pdf-creator-node": "^2.3.5",
     "pino": "^6.10.0",
     "validator": "^13.11.0"
   },
