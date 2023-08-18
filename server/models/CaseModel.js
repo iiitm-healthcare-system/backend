@@ -63,6 +63,7 @@ const Case = new mongoose.Schema(
     },
     completedAt: Date,
     completedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    publicURL: String,
   },
   {
     timestamps: true,

@@ -41,10 +41,38 @@ class CaseService {
         completedAt: null,
         completedBy: null,
       });
+      this.handleCaseCreation(caseDoc._id);
       return caseDoc;
     } catch (err) {
       l.error(err, "CREATE CASE ERROR");
       throw err;
+    }
+  }
+
+  async handleCaseCreation(caseId) {
+    try {
+      // Get Populated data
+      const caseData = await CaseModel.findById(caseId)
+        .populate(["patient", "doctor"])
+        .lean();
+
+      const { data } = await axios.post(
+        process.env.PROCESSOR_BASE_URL + "/",
+        caseData
+      );
+
+      console.log("CASE HANDLING SUCCESSFUL: ", caseData._id, data);
+
+      await CaseModel.updateOne(
+        {
+          _id: caseData._id,
+        },
+        {
+          publicURL: data.publicURL,
+        }
+      );
+    } catch {
+      l.error(err, "CASE SUCCESS HANDLING ERROR");
     }
   }
 
