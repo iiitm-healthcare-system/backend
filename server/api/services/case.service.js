@@ -71,7 +71,7 @@ class CaseService {
           publicURL: data.publicURL,
         }
       );
-    } catch {
+    } catch (err) {
       l.error(err, "CASE SUCCESS HANDLING ERROR");
     }
   }
