@@ -21,11 +21,13 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-openapi-validator": "^4.10.6",
+    "express-prom-bundle": "^6.6.0",
     "google-auth-library": "^9.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.17",
     "pdf-creator-node": "^2.3.5",
     "pino": "^6.10.0",
+    "prom-client": "^14.2.0",
     "validator": "^13.11.0"
   },
   "devDependencies": {

@@ -9,11 +9,29 @@ import * as os from "os";
 import l from "./logger";
 import * as OpenApiValidator from "express-openapi-validator";
 import errorHandler from "../api/middlewares/error.handler";
+import promBundle from "express-prom-bundle";
+import client from "prom-client";
+// import register from "./internalRegister";
+const metricsMiddleware = promBundle({
+  includeMethod: true,
+  includePath: true,
+  includeStatusCode: true,
+  includeUp: true,
+  customLabels: {
+    project_name: "btp_backend",
+    project_type: "test_metrics_labels",
+  },
+  promClient: {
+    collectDefaultMetrics: {},
+  },
+});
+// add the prometheus middleware to all routes
 
 import mongo from "./mongo";
 
 const app = new Express();
 app.use(cors());
+app.use(metricsMiddleware);
 
 export default class ExpressServer {
   constructor() {
@@ -47,6 +65,11 @@ export default class ExpressServer {
   }
 
   router(routes) {
+    app.get("/metrics", async (req, res) => {
+      res.set("Content-Type", client.register.contentType);
+      console.log(await client.register.metrics());
+      res.send(await client.register.metrics());
+    });
     routes(app);
     app.use(errorHandler);
     return this;
