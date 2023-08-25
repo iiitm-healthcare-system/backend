@@ -12,7 +12,8 @@
     "test:debug": "mocha --require @babel/register --inspect-brk --exit",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "fakedata:user": "node scripts/add-fake-users.js"
+    "fakedata:user": "node scripts/add-fake-users.js",
+    "fakedata:case": "node scripts/add-fake-cases.js"
   },
   "dependencies": {
     "axios": "^1.4.0",
